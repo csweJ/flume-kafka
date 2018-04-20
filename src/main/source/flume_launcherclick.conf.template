@@ -1,0 +1,38 @@
+#logser 可以看作是flume服务的名称，每个flume都由sources、channels和sinks三部分组成
+#sources 可以看作是数据源头、channles是中间转存的渠道、sinks是数据后面的去向
+logser.sources = src_launcherclick
+logser.sinks = kfk_launcherclick
+logser.channels = ch_launcherclick
+
+
+#source 
+#源头类型是taildir 就可以实时监控以追加形式写入文件的日志，
+logser.sources.src_launcherclick.type=TAILDIR
+#positionFile记录所有监控的文件信息
+logser.sources.src_launcherclick.positionFile=/opt/apache-flume-1.8.0-bin/tmp/position/launcherclick/taildir_position.json
+#监控的文件组
+logser.sources.src_launcherclick.filegroups=f1
+#文件组包含具体的文件，也就是我们监控的文件
+logser.sources.src_launcherclick.filegroups.f1=/opt/apache-flume-1.8.0-bin/test/.*
+
+#interceptor  拦截器，数据进入到source做的更改，清洗，拦截过滤
+#logser.sources.src_launcherclick.interceptors=i1
+#logser.sources.src_launcherclick.interceptors.i1.type=static
+#logser.sources.src_launcherclick.interceptors.i1.key=topic
+#logser.sources.src_launcherclick.interceptors.i1.value=launcherclick
+
+#channel
+logser.channels.ch_launcherclick.type=memory
+logser.channels.ch_launcherclick.capacity=10000
+logser.channels.ch_launcherclick.transactionCapacity=1000
+
+#kafka sink 指定sink类型为kafka 说明日志最后要发送到kafka
+logser.sinks.kfk_launcherclick.type=org.apache.flume.sink.kafka.KafkaSink
+logser.sinks.kfk_launcherclick.brokerList=192.168.31.221:9092
+logser.sinks.kfk_launcherclick.topic=test
+logser.sinks.kfk_launcherclick.serializer.class=kafka.serializer.StringEncoder 
+
+#绑定source和sink到channel
+logser.sources.src_launcherclick.channels = ch_launcherclick
+logser.sinks.kfk_launcherclick.channel = ch_launcherclick
+

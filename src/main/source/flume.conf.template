@@ -1,0 +1,125 @@
+##flume配置文件中agent的name=agent1
+agentName=${agentName}
+##定义source、channel、sinks
+${agentName}.sources=${sourceName}
+${agentName}.channels=${channelName}
+${agentName}.sinks=${sinkName}
+
+#拦截器根据需求可以自定义  interceptors
+#agent1.sources.${sourceName}.interceptors
+
+#source
+
+
+${agentName}.sources.${sourceName}.type=${sourceTypeClass}
+
+#是否在event的Header中添加文件名，boolean类型, 默认false   
+${agentName}.sources.${sourceName}.fileHeader=${fileHeader}
+
+#event的Header中的key,value是文件名
+${agentName}.sources.${sourceName}.fileHeaderKey=${fileHeaderKey}
+
+#batchSize这个是一次处理的记录数，默认是100；
+${agentName}.sources.${sourceName}.batchSize=${batchSize}
+
+
+#spoolDir source
+#监听文件的目录    		
+${agentName}.sources.${sourceName}.spoolDir=${spoolDirName}
+#是否递归监听
+${agentName}.sources.${sourceName}.recursiveDirectorySearch=${isRecursiveDirectorySearch}
+
+#completedSuffix是文件读取完毕后给完成文件添加的标记后缀，默认是".COMPLETED"；建议默认
+#${agentName}.sources.${sourceName}.completedSuffix=.COMPLETED
+
+#deletePolicy这是是否删除读取完毕的文件，默认是"never"，就是不删除，目前只支持"never"和“IMMEDIATE”；
+#${agentName}.sources.${sourceName}.deletePolicy=never
+
+
+
+
+#inputCharset编码方式，默认是"UTF-8"；
+#${agentName}.sources.${sourceName}.inputCharset=UTF-8
+
+#ignorePattern忽略符合条件的文件
+${agentName}.sources.${sourceName}.ignorePattern=${ignorePattern}
+
+
+#syslog source  (采用Syslog tcp source)  还有Syslog UDP Source  Multiport Syslog TCP Source 配置不同
+${agentName}.sources.${sourceName}.host=${syslogHost}
+${agentName}.sources.${sourceName}.ports=${syslogPorts}
+#一个event中一行最大的字节数 默认2500
+${agentName}.sources.${sourceName}.eventSize=${eventSize}
+${agentName}.sources.${sourceName}.portHeader=port
+
+#taildir source 就可以实时监控以追加形式写入文件的日志，
+
+#positionFile记录所有监控的文件信息
+${agentName}.sources.${sourceName}.positionFile=${positionFile}
+#监控的文件组
+${agentName}.sources.${sourceName}.filegroups=${filegroup}
+#文件组包含具体的文件，也就是我们监控的文件
+${agentName}.sources.${sourceName}.filegroups.${filegroup}=${file}
+
+#sql source 监控数据库变化
+#数据库链接url
+${agentName}.sources.${sourceName}.hibernate.connection.url=${url}
+#数据库driverclass
+${agentName}.sources.${sourceName}.hibernate.connection.driver_class=${driverClass}
+#数据库hibernate.dialect
+${agentName}.sources.${sourceName}.hibernate.connection.hibernate.dialect=${dialect}
+#数据库名
+${agentName}.sources.${sourceName}.hibernate.connection.user=${user}
+#密码
+${agentName}.sources.${sourceName}.hibernate.connection.password=${password}
+#所要抽取的表名
+${agentName}.sources.${sourceName}.table=${table}
+#需要查询的列字段
+${agentName}.sources.${sourceName}.columns.to.select=${selectColumns}
+#增量列名
+${agentName}.sources.${sourceName}.incremental.column.name=${incrementalCol}
+#增量初始值
+${agentName}.sources.${sourceName}.incremental.value=${incrementalVal}
+#发起查询的时间间隔，单位是毫秒
+${agentName}.sources.${sourceName}.run.query.delay=${delay}
+	
+#状态文件路径
+${agentName}.sources.${sourceName}.status.file.path = ${statusFilePath}  
+#状态文件名称
+${agentName}.sources.${sourceName}.status.file.name = ${statusFileName}
+#每次查询的最大行数
+${agentName}.sources.${sourceName}.max.rows = ${maxRows}
+#分隔符
+${agentName}.sources.${sourceName}.delimiter.entry = ${delimiter}
+${agentName}.sources.${sourceName}.enclose.by.quotes = ${hasQuotes}
+#channels    这里将数据保存在内存队列中   也可以保存在本地文件中 或者kafka中 只是使用不同的配置
+#内存
+${agentName}.channels.${channelName}.type = memory    
+#容量
+${agentName}.channels.${channelName}.capacity = ${capacity}  
+#吞吐量 	Channel每次提交的Event数量  
+${agentName}.channels.${channelName}.transactionCapacity = ${transactionCapacity} 
+#存活时间，单位是秒 
+#${agentName}.channels.${channelName}.keep-alive=30    
+
+
+#sinks  传送到kafka
+#类型  使用flume自带的  不是flume插件  两者的参数不同
+${agentName}.sinks.${sinkName}.type=org.apache.flume.sink.kafka.KafkaSink
+
+#broker 主机ip和port
+${agentName}.sinks.${sinkName}.brokerList=${brokerList}
+
+#kafka 消息主题topic
+${agentName}.sinks.${sinkName}.topic=${topicName}
+
+${agentName}.sinks.${sinkName}.batchSize=${batchSize}
+
+#序列化类
+${agentName}.sinks.${sinkName}.serializer.class=kafka.serializer.StringEncoder
+
+
+#绑定source和sink到channel
+${agentName}.sources.${sourceName}.channels = ${channelName}
+${agentName}.sinks.${sinkName}.channel = ${channelName}
+

@@ -1,0 +1,72 @@
+##flume配置文件中agent的name=agent1
+
+
+#Spooling-directory source
+##定义source、channel、sinks
+${agentName}.sources=${sourceName}
+${agentName}.channels=${channelName}
+${agentName}.sinks=${sinkName}
+
+#拦截器根据需求可以自定义  interceptors
+#agent1.sources.${sourceName}.interceptors
+
+#source
+
+#这个source不具有监控子目录的功能，也就是不能递归监控。如果需要，这需要自己去实现  不能监听目录下文件内容的追加修改
+${agentName}.sources.${sourceName}.type=${sourceTypeClass}
+
+#监听文件的目录    		
+${agentName}.sources.${sourceName}.spoolDir=${spoolDirName}
+
+#是否在event的Header中添加文件名，boolean类型, 默认false   
+${agentName}.sources.${sourceName}.fileHeader=${fileHeader}
+
+
+#event的Header中的key,value是文件名
+${agentName}.sources.${sourceName}.fileHeaderKey=${fileHeaderKey}
+
+#completedSuffix是文件读取完毕后给完成文件添加的标记后缀，默认是".COMPLETED"；建议默认
+#${agentName}.sources.${sourceName}.completedSuffix=.COMPLETED
+
+#deletePolicy这是是否删除读取完毕的文件，默认是"never"，就是不删除，目前只支持"never"和“IMMEDIATE”；
+#${agentName}.sources.${sourceName}.deletePolicy=never
+
+#batchSize这个是一次处理的记录数，默认是100；
+${agentName}.sources.${sourceName}.batchSize=${batchSize}
+
+#inputCharset编码方式，默认是"UTF-8"；
+#${agentName}.sources.${sourceName}.inputCharset=UTF-8
+
+#ignorePattern忽略符合条件的文件
+${agentName}.sources.${sourceName}.ignorePattern=${ignorePattern}
+
+#channels    这里将数据保存在内存队列中   也可以保存在本地文件中 或者kafka中 只是使用不同的配置
+#内存
+${agentName}.channels.${channelName}.type = ${channelType}    
+#容量
+${agentName}.channels.${channelName}.capacity = ${capacity}  
+#吞吐量 	Channel每次提交的Event数量  
+${agentName}.channels.${channelName}.transactionCapacity = ${transactionCapacity} 
+#存活时间，单位是秒 
+#${agentName}.channels.${channelName}.keep-alive=30    
+
+
+#sinks  传送到kafka
+#类型  使用flume自带的  不是flume插件  两者的参数不同
+${agentName}.sinks.${sinkName}.type=${sinkType}
+
+#broker 主机ip和port
+${agentName}.sinks.${sinkName}.brokerList=${brokerList}
+
+
+#kafka 消息主题topic
+${agentName}.sinks.${sinkName}.topic=${topicName}
+
+#序列化类
+#${agentName}.sinks.${sinkName}.serializer.class=kafka.serializer.StringEncoder
+
+
+#绑定source和sink到channel
+${agentName}.sources.${sourceName}.channels = ${channelName}
+${agentName}.sinks.${sinkName}.channel = ${channelName}
+

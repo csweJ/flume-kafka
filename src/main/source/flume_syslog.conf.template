@@ -1,0 +1,34 @@
+#Syslog source
+##定义source、channel、sinks
+agent2.sources=src2
+agent2.channels=ch2
+agent2.sinks=sink2
+
+#source  (采用Syslog tcp source)  还有Syslog UDP Source  Multiport Syslog TCP Source 配置不同
+agent2.sources.src2.type=syslogtcp	
+agent2.sources.src2.host=192.168.31.221
+agent2.sources.src2.port=5000
+#一个event中一行最大的字节数 默认2500
+agent2.sources.src2.eventSize=2500
+
+#channels
+#channels    这里将数据保存在内存队列中   也可以保存在本地文件中 或者kafka中 只是使用不同的配置
+#内存
+agent2.channels.ch2.type = memory 
+#容量  
+agent2.channels.ch2.capacity = 100000  
+#吞吐量 	Channel每次提交的Event数量 
+agent2.channels.ch2.transactionCapacity = 100000  
+
+#sinks
+#类型
+agent2.sinks.sink2.type=org.apache.flume.sink.kafka.KafkaSink
+#broker 主机ip和port
+agent2.sinks.sink2.brokerList=192.168.31.221:9092
+#kafka 消息主题topic
+agent2.sinks.sink2.topic=testlog
+agent2.sinks.sink2.serializer.class=kafka.serializer.StringEncoder
+
+#绑定source和sink到channel
+agent2.sources.src2.channels = ch2
+agent2.sinks.sink2.channel = ch2
